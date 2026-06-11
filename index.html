@@ -4,78 +4,111 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FocusSound — Ambient Noise Mixer</title>
-  <meta name="description"
-    content="A minimalist ambient noise mixer. Blend rain, ocean, coffee shop, forest, and more to craft your perfect focus environment." />
-
-  <script src="https://cdn.tailwindcss.com"></script>
-
+  <title>FocusSound — Premium Ambient Mixer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          colors: { slate: { 850: '#0f172a', 950: '#020617' } },
-        }
-      }
-    }
-  </script>
-
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@200;400;500;700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<body class="relative text-slate-100 selection:bg-indigo-500/30">
+<body>
 
-  <div class="bg-orb bg-orb-1"></div>
-  <div class="bg-orb bg-orb-2"></div>
-  <div class="bg-orb bg-orb-3"></div>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
-  <div class="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8 pb-16">
+  <div class="dashboard-container">
 
-    <header class="pt-10 pb-8 text-center">
-      <div
-        class="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 uppercase tracking-widest font-medium">
-        <span class="status-dot" id="global-dot"></span>
-        <span id="global-status-text">All silent</span>
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-gloss-shine"></div>
+      <div class="sidebar-sticky-content">
+
+        <header class="sidebar-header">
+          <div class="sidebar-mini-brand">
+            <span class="mini-dot"></span> FS // CONTROL
+          </div>
+          <div class="status-pill" aria-live="polite">
+            <span class="status-dot" id="global-dot"></span>
+            <span id="global-status-text">All silent</span>
+          </div>
+        </header>
+
+        <section class="timer-section" aria-label="Focus countdown timer">
+          <div class="timer-ring-wrap">
+            <svg class="timer-ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="timer-ring-track" cx="60" cy="60" r="52" />
+              <circle class="timer-ring-fill" id="timer-ring-fill" cx="60" cy="60" r="52" />
+            </svg>
+            <div class="timer-display">
+              <span class="timer-digits" id="timer-digits">25:00</span>
+              <span class="timer-label-text">focus</span>
+            </div>
+          </div>
+
+          <div class="timer-controls">
+            <button class="timer-preset-btn" id="preset-25" data-minutes="25">25m</button>
+            <button class="timer-preset-btn" id="preset-45" data-minutes="45">45m</button>
+            <button class="timer-preset-btn" id="preset-60" data-minutes="60">60m</button>
+            <button class="timer-play-btn" id="btn-timer-play" aria-label="Start or pause timer" aria-pressed="false">
+              <svg id="timer-icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5,3 19,12 5,21" />
+              </svg>
+              <svg id="timer-icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+                style="display:none;">
+                <rect x="6" y="4" width="4" height="16" />
+                <rect x="14" y="4" width="4" height="16" />
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <section class="presets-section" aria-label="Quick soundscape presets">
+          <p class="presets-label">Quick Presets</p>
+          <div class="presets-column">
+            <button class="preset-capsule" id="preset-rainy-cafe">☕ Rainy Café</button>
+            <button class="preset-capsule" id="preset-cozy-cabin">🪵 Cozy Cabin</button>
+            <button class="preset-capsule" id="preset-deep-space">🌌 Deep Space</button>
+          </div>
+        </section>
+
+        <div class="master-controls">
+          <button class="master-btn" id="btn-pause-all">Pause All</button>
+          <button class="master-btn danger" id="btn-reset-all">Reset All</button>
+        </div>
+
       </div>
-      <h1
-        class="text-4xl sm:text-5xl font-bold tracking-tight bg-gradient-to-br from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-        FocusSound
-      </h1>
-      <p class="mt-3 text-slate-400 text-base sm:text-lg max-w-sm mx-auto leading-relaxed font-light">
-        Blend ambient sounds to craft your perfect focus environment.
-      </p>
+    </aside>
 
-      <div class="flex items-center justify-center gap-3 mt-6">
-        <button class="master-btn" id="btn-pause-all">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-            <rect x="6" y="4" width="4" height="16" />
-            <rect x="14" y="4" width="4" height="16" />
-          </svg>
-          Pause All
-        </button>
-        <button class="master-btn danger" id="btn-reset-all">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <polyline points="1 4 1 10 7 10" />
-            <path d="M3.51 15a9 9 0 1 0 .49-3.45" />
-          </svg>
-          Reset
-        </button>
-      </div>
-    </header>
+    <main class="dashboard-main">
+      <div class="main-wrapper">
 
-    <main class="flex-1">
-      <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5" id="sound-grid">
+        <header class="spa-reception-wall">
+          <div class="spa-fire-wash-glow" aria-hidden="true"></div>
+
+          <div class="spa-content-layer">
+
+            <div class="spa-brand-emblem" aria-hidden="true">
+              <div class="emblem-ring ring-1"></div>
+              <div class="emblem-ring ring-2"></div>
+              <div class="emblem-core"></div>
+            </div>
+
+            <div class="spa-typography">
+              <h1 class="spa-title-wordmark">FocusSound</h1>
+              <div class="spa-divider-line"></div>
+              <p class="spa-subtitle-logotext">SOUND MIXER DASHBOARD</p>
+              <p class="spa-ambient-motto">Calm your frequency. Balance your space.</p>
+            </div>
+
+          </div>
+        </header>
+
+        <div class="sounds-grid" id="sounds-grid">
+        </div>
+
       </div>
     </main>
 
-    <footer class="mt-12 text-center text-slate-600 text-xs">
-      All audio sourced from royalty-free public domain archives.
-    </footer>
   </div>
 
   <script src="script.js"></script>
